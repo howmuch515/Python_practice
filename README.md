@@ -1,1 +1,1 @@
-# This is quizez for python begginerz.
+# This is quizes for python begginers.
