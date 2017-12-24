@@ -1,5 +1,6 @@
 from random import randint
 ROCK, PAPER, SCISSORS = 1, 2, 3
+HANDS = ("ROCK", "PAPER", "SCISSORS")
 
 
 class Player():
@@ -12,11 +13,8 @@ class Player():
         return self.card[hand] > 0
 
     def setCard(self, hand):
-        if not self.haveCard(hand):
-            raise Exception("Not last")
-        else: 
-            self.card[hand] -= 1
-            self.hand = hand
+        self.card[hand] -= 1
+        self.hand = hand
 
 class CPU(Player):
     def __init__(self):
@@ -39,28 +37,30 @@ class LimitedRSP():
         self.user = Player()
         self.cpu = CPU()
         self.round = 1
+        self.win_counter = 0
+        self.lose_counter = 0
+        self.draw_counter = 0
 
 
     def showMenu(self):
-        print("[1] ROCK")
-        print("[2] PAPER")
-        print("[3] SCISSORS")
-
-
-    def showStatus(self):
         print("ROUND: {}".format(self.round))
-        print("STAR\nUSER: {}, CPU: {}".format(self.user.star, self.cpu.star))
-        print("last card\nROCK: {}, PAPER: {}, SCISSORS: {}".format(self.user.card[ROCK], self.user.card[PAPER], self.user.card[SCISSORS]))
-
-
+        print("STAR: {}".format(self.user.star))
+        print()
+        print("Please choice.\n1.ROCK: ({})\n2.PAPER: ({})\n3.SCISSORS: ({})".format(self.user.card[ROCK], self.user.card[PAPER], self.user.card[SCISSORS]))
 
     def showResult(self):
         print("GAME OVER")
+        if self.user.star == self.cpu.star:
+            print("DRAW")
+        elif self.user.star > self.cpu.star:
+            print("WINNER: Player")
+        else:
+            print("WINNER: CPU")
+        print("win:{}, lose:{}, draw:{}".format(self.win_counter, self.lose_counter, self.draw_counter))
 
 
     def setCard(self, user_select):
         if user_select.isdigit():
-            print("A")
             user_select = int(user_select)
             if user_select in (ROCK, PAPER, SCISSORS):
                 if self.user.haveCard(user_select):
@@ -68,10 +68,13 @@ class LimitedRSP():
                     self.cpu.setCard()
                     return True
                 else: 
+                    print("\nInvalid Choice!\n")
                     return False
             else:
+                print("\nInvalid Choice!\n")
                 return False
         else:
+            print("\nInvalid Choice!\n")
             return False
 
 
@@ -79,56 +82,47 @@ class LimitedRSP():
         return (self.user.star == 0 or self.cpu.star == 0) or (self.round > 6)
 
     def win(self):
-        print("win")
+        self.win_counter += 1
         self.round += 1
         self.user.star += 1
         self.cpu.star -= 1
+        print("WIN")
+        print("STAR {} -> {}".format(self.user.star - 1, self.user.star))
+        print()
+
     def lose(self):
-        print("lose")
+        self.lose_counter += 1
         self.round += 1
         self.user.star -= 1
         self.cpu.star += 1
+        print("LOSE")
+        print("STAR {} -> {}".format(self.user.star + 1, self.user.star))
+        print()
 
     def draw(self):
-        print("draw")
-        pass
+        self.draw_counter += 1
+        self.round += 1
+        print("DRAW")
+        print()
             
     def judge(self):
-        print("C")
+        # gu par choki
         user_hand, cpu_hand = self.user.hand, self.cpu.hand
-        if user_hand == cpu_hand:
-            return self.draw() 
-        elif user_hand == ROCK:
-            if cpu_hand == PAPER:
-                return self.lose()
-            else:
-                return self.win()
-        elif user_hand == PAPER:
-            if cpu_hand == SCISSORS:
-                return self.lose()
-            else:
-                return self.win()
-        else: # user_hand == SCISSORS
-            if cpu_hand == ROCK:
-                return self.lose()
-            else:
-                return self.win()
-
+        print("YOU {}\nCPU {}".format(HANDS[user_hand - 1], HANDS[cpu_hand - 1]))
+        (self.draw, self.lose, self.win)[cpu_hand - user_hand]()
+        
         
 def main():
     game = LimitedRSP()
     while True:
-        game.showStatus()
         game.showMenu()
-        user_input = input("Your choice >> ")
+        user_input = input("Your choice -> ")
 
         if not game.setCard(user_input):
-            print("B")
             continue
-        print("D")
         game.judge()
+        
         if game.isGameOver():
-            print("+++++ GAME OVER +++++")
             game.showResult()
             break
 
