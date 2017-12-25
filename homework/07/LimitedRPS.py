@@ -13,16 +13,16 @@ class Player():
         # Player has STAR * 3
         self.star = 3
 
-        # selected card by Player
+        # chosen card by Player
         self.hand = 0
 
 
     # checking cards are left
-    def haveCard(self, hand):
+    def checkLeftCard(self, hand):
         return self.card[hand] > 0
 
 
-    # set user select to hand
+    # set user's choice to hand
     def setCard(self, hand):
         self.card[hand] -= 1
         self.hand = hand
@@ -33,11 +33,15 @@ class CPU(Player):
         super().__init__()
 
     
-    # cpu select card at random
+    # cpu's choice at random
     def setCard(self):
         while True:
+
+            # choice hand at random
             hand = randint(1, 3)
-            if not self.haveCard(hand):
+
+            # if choiced hand is not left, reset
+            if not self.checkLeftCard(hand):
                 continue
             else:
                 self.card[hand] -= 1
@@ -78,13 +82,13 @@ class LimitedRSP():
         print("win:{}, lose:{}, draw:{}".format(self.win_counter, self.lose_counter, self.draw_counter))
 
 
-    # set Card Player and CP
-    def setCard(self, user_select):
-        if user_select.isdigit():
-            user_select = int(user_select)
-            if user_select in (ROCK, PAPER, SCISSORS):
-                if self.user.haveCard(user_select):
-                    self.user.setCard(user_select)
+    # set Card Player and CPU
+    def chooseCard(self, user_choice):
+        if user_choice.isdigit():
+            user_choice = int(user_choice)
+            if user_choice in (ROCK, PAPER, SCISSORS):
+                if self.user.checkLeftCard(user_choice):
+                    self.user.setCard(user_choice)
                     self.cpu.setCard()
                     return True
                 else: 
@@ -146,7 +150,7 @@ def main():
         user_input = input("Your choice -> ")
 
         # checking validity and set card
-        if not game.setCard(user_input):
+        if not game.chooseCard(user_input):
             continue
 
         # RSP battle
