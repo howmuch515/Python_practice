@@ -68,6 +68,7 @@ class LimitedRSP():
         print("STAR: {}".format(self.user.star))
         print()
         print("Please choice.\n1.ROCK: ({})\n2.PAPER: ({})\n3.SCISSORS: ({})".format(self.user.card[ROCK], self.user.card[PAPER], self.user.card[SCISSORS]))
+        print()
 
 
     # show result at the end
@@ -80,26 +81,27 @@ class LimitedRSP():
         else:
             print("WINNER: CPU")
         print("win:{}, lose:{}, draw:{}".format(self.win_counter, self.lose_counter, self.draw_counter))
+        print()
 
 
     # set Card Player and CPU
     def chooseCard(self, user_choice):
-        if user_choice.isdigit():
-            user_choice = int(user_choice)
-            if user_choice in (ROCK, PAPER, SCISSORS):
-                if self.user.checkLeftCard(user_choice):
-                    self.user.setCard(user_choice)
-                    self.cpu.setCard()
-                    return True
-                else: 
-                    print("\nInvalid Choice!\n")
-                    return False
-            else:
-                print("\nInvalid Choice!\n")
-                return False
+        if not user_choice in ("1", "2", "3"):
+            print("Invalid Choice!")
+            print()
+            raise Exception
+
+        # type change. str -> int
+        user_choice = int(user_choice)
+
+        if self.user.checkLeftCard(user_choice):
+            self.user.setCard(user_choice)
+            self.cpu.setCard()
+            return True
         else:
-            print("\nInvalid Choice!\n")
-            return False
+            print("Not left")
+            print()
+            raise Exception
 
 
     # check game over
@@ -136,9 +138,11 @@ class LimitedRSP():
 
     # judge the outcome of janken
     def judge(self):
-        # gu par choki
         user_hand, cpu_hand = self.user.hand, self.cpu.hand
         print("YOU {}\nCPU {}".format(HANDS[user_hand - 1], HANDS[cpu_hand - 1]))
+        print()
+
+        # judge method
         (self.draw, self.lose, self.win)[cpu_hand - user_hand]()
         
         
@@ -148,10 +152,14 @@ def main():
     while True:
         game.showMenu()
         user_input = input("Your choice -> ")
+        print()
 
         # checking validity and set card
-        if not game.chooseCard(user_input):
+        try: 
+            game.chooseCard(user_input)
+        except:
             continue
+
 
         # RSP battle
         game.judge()
