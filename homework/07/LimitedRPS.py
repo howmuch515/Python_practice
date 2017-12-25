@@ -67,7 +67,12 @@ class LimitedRSP():
         print("ROUND: {}".format(self.round))
         print("STAR: {}".format(self.user.star))
         print()
-        print("Please choice.\n1.ROCK: ({})\n2.PAPER: ({})\n3.SCISSORS: ({})".format(self.user.card[ROCK], self.user.card[PAPER], self.user.card[SCISSORS]))
+        print("Please choice.")
+
+        # show choice
+        for i in range(1, 4):
+            print("{}.{}: ({})".format(i, HANDS[i - 1], self.user.card[i]))
+
         print()
 
 
