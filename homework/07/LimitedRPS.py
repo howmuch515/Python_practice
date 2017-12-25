@@ -52,7 +52,7 @@ class CPU(Player):
 # Game class
 class LimitedRSP():
     def __init__(self):
-        self.user = Player()
+        self.you = Player()
         self.cpu = CPU()
 
         # counters
@@ -64,14 +64,15 @@ class LimitedRSP():
 
     # Show menu
     def showMenu(self):
+        print("+" * 30)
         print("ROUND: {}".format(self.round))
-        print("STAR: {}".format(self.user.star))
+        print("STAR: {}".format(self.you.star))
         print()
         print("Please choice.")
 
         # show choice
         for i in range(1, 4):
-            print("{}.{}: ({})".format(i, HANDS[i - 1], self.user.card[i]))
+            print("{}.{}: ({})".format(i, HANDS[i - 1], self.you.card[i]))
 
         print()
 
@@ -79,28 +80,28 @@ class LimitedRSP():
     # show result at the end
     def showResult(self):
         print("GAME OVER")
-        if self.user.star == self.cpu.star:
+        if self.you.star == self.cpu.star:
             print("DRAW")
-        elif self.user.star > self.cpu.star:
-            print("WINNER: Player")
+        elif self.you.star > self.cpu.star:
+            print("WINNER: YOU")
         else:
             print("WINNER: CPU")
         print("win:{}, lose:{}, draw:{}".format(self.win_counter, self.lose_counter, self.draw_counter))
         print()
 
 
-    # set Card Player and CPU
-    def chooseCard(self, user_choice):
-        if not user_choice in ("1", "2", "3"):
+    # set Card You and CPU
+    def chooseCard(self, you_choice):
+        if not you_choice in ("1", "2", "3"):
             print("Invalid Choice!")
             print()
             raise Exception
 
         # type change. str -> int
-        user_choice = int(user_choice)
+        you_choice = int(you_choice)
 
-        if self.user.checkLeftCard(user_choice):
-            self.user.setCard(user_choice)
+        if self.you.checkLeftCard(you_choice):
+            self.you.setCard(you_choice)
             self.cpu.setCard()
             return True
         else:
@@ -111,26 +112,26 @@ class LimitedRSP():
 
     # check game over
     def isGameOver(self):
-        return (self.user.star == 0 or self.cpu.star == 0) or (self.round > 6)
+        return (self.you.star == 0 or self.cpu.star == 0) or (self.round > 6)
 
 
     def win(self):
         self.win_counter += 1
         self.round += 1
-        self.user.star += 1
+        self.you.star += 1
         self.cpu.star -= 1
         print("WIN")
-        print("STAR {} -> {}".format(self.user.star - 1, self.user.star))
+        print("STAR {} -> {}".format(self.you.star - 1, self.you.star))
         print()
 
 
     def lose(self):
         self.lose_counter += 1
         self.round += 1
-        self.user.star -= 1
+        self.you.star -= 1
         self.cpu.star += 1
         print("LOSE")
-        print("STAR {} -> {}".format(self.user.star + 1, self.user.star))
+        print("STAR {} -> {}".format(self.you.star + 1, self.you.star))
         print()
 
 
@@ -143,12 +144,12 @@ class LimitedRSP():
 
     # judge the outcome of janken
     def judge(self):
-        user_hand, cpu_hand = self.user.hand, self.cpu.hand
-        print("YOU {}\nCPU {}".format(HANDS[user_hand - 1], HANDS[cpu_hand - 1]))
+        you_hand, cpu_hand = self.you.hand, self.cpu.hand
+        print("YOU {}\nCPU {}".format(HANDS[you_hand - 1], HANDS[cpu_hand - 1]))
         print()
 
         # judge method
-        (self.draw, self.lose, self.win)[cpu_hand - user_hand]()
+        (self.draw, self.lose, self.win)[cpu_hand - you_hand]()
         
         
 # MAIN
@@ -156,12 +157,12 @@ def main():
     game = LimitedRSP()
     while True:
         game.showMenu()
-        user_input = input("Your choice -> ")
+        you_input = input("Your choice -> ")
         print()
 
         # checking validity and set card
         try: 
-            game.chooseCard(user_input)
+            game.chooseCard(you_input)
         except:
             continue
 
